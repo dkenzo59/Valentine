@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be My Valentine? 💕</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ffecea 0%, #ffb3ba 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            color: #ff6b9d;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            color: #ff6b9d;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .image-container {
+            margin: 20px 0;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            object-fit: contain;
+        }
+
+        .question {
+            font-size: 1.5em;
+            color: #333;
+            margin: 20px 0;
+        }
+
+        .puzzle-stage {
+            display: none;
+        }
+
+        .puzzle-stage.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Math puzzle */
+        .math-puzzle {
+            margin: 30px 0;
+        }
+
+        .math-question {
+            font-size: 1.3em;
+            color: #333;
+            margin: 20px 0;
+        }
+
+        input[type="text"] {
+            font-size: 1.2em;
+            padding: 10px 20px;
+            border: 2px solid #ff6b9d;
+            border-radius: 25px;
+            text-align: center;
+            width: 150px;
+            margin: 10px;
+        }
+
+        .submit-btn {
+            background: #ff6b9d;
+            color: white;
+            padding: 12px 35px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            margin: 10px;
+        }
+
+        .submit-btn:hover {
+            background: #ff4d88;
+            transform: scale(1.05);
+        }
+
+        /* Anniversary reveal */
+        .anniversary-reveal {
+            display: none;
+            background: linear-gradient(135deg, #ff6b9d, #ff8fab);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .anniversary-reveal.show {
+            display: block;
+        }
+
+        .anniversary-reveal h3 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .anniversary-reveal p {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+
+        .anniversary-date {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 15px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .continue-btn {
+            background: white;
+            color: #ff6b9d;
+            padding: 12px 35px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .continue-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Riddle */
+        .riddle {
+            margin: 30px 0;
+        }
+
+        .riddle-text {
+            font-size: 1.2em;
+            color: #555;
+            margin: 20px 0;
+            font-style: italic;
+            line-height: 1.6;
+        }
+
+        /* Nickname choice */
+        .nickname-choice {
+            margin: 30px 0;
+        }
+
+        .nickname-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .nickname-btn {
+            background: #f0f0f0;
+            color: #666;
+            padding: 15px 30px;
+            border: 3px solid #ddd;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nickname-btn:hover {
+            transform: translateX(10px);
+            border-color: #ff6b9d;
+        }
+
+        .nickname-btn.wrong:active {
+            animation: shake 0.5s;
+            background: #ffcccc;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* Wrong answer hint */
+        .wrong-hint {
+            display: none;
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border: 2px solid #ffeaa7;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .wrong-hint.show {
+            display: block;
+        }
+
+        .wrong-hint p {
+            font-size: 1.1em;
+            margin: 5px 0;
+        }
+
+        /* Correct answer reveal */
+        .correct-reveal {
+            display: none;
+            background: linear-gradient(135deg, #ff6b9d, #ff8fab);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .correct-reveal.show {
+            display: block;
+        }
+
+        .correct-reveal h3 {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        /* Button chase */
+        .buttons {
+            margin-top: 30px;
+            position: relative;
+            height: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        button {
+            font-size: 1.2em;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        #yesBtn {
+            background: #ff6b9d;
+            color: white;
+            position: fixed;
+            z-index: 15;
+        }
+
+        #yesBtn:hover {
+            background: #ff4d88;
+        }
+
+        #noBtn {
+            background: #ddd;
+            color: #666;
+            position: fixed;
+            z-index: 10;
+        }
+
+        #noBtn:hover {
+            background: #ccc;
+        }
+
+        /* Explosion animation */
+        @keyframes explode {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(6);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(10);
+                opacity: 0;
+            }
+        }
+
+        .exploding {
+            animation: explode 1s ease-out forwards;
+        }
+
+        /* Success */
+        .success {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .hearts {
+            font-size: 3em;
+            margin: 20px 0;
+        }
+
+        .final-message {
+            font-size: 1.5em;
+            color: #ff6b9d;
+            margin-top: 20px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Progress bar */
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b9d, #ff4d88);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        .stage-indicator {
+            color: #ff6b9d;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* Music control button */
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #ff6b9d;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .music-control:hover {
+            transform: scale(1.1);
+            background: #ff4d88;
+        }
+
+        /* Start overlay */
+        .start-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 107, 157, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            cursor: pointer;
+        }
+
+        .start-button {
+            background: white;
+            color: #ff6b9d;
+            padding: 20px 50px;
+            border-radius: 50px;
+            font-size: 1.5em;
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .song-credit {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            color: #ff6b9d;
+            font-size: 0.9em;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            z-index: 900;
+        }
+
+        .hint {
+            font-size: 0.9em;
+            color: #999;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .error-message {
+            color: #ff4d88;
+            margin-top: 10px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Start overlay -->
+    <div class="start-overlay" id="startOverlay">
+        <div class="start-button">
+            💕 Start the Puzzle 💕
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Progress indicator -->
+        <div class="stage-indicator" id="stageIndicator">Stage 1 of 4</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- Stage 1: Math Puzzle -->
+        <div class="puzzle-stage active" id="stage1">
+            <h2>💕 Stage 1: Love Math 💕</h2>
+            <div class="image-container">
+                <img src="valentine-image.jpg" alt="Valentine's image" id="valentineImage">
+            </div>
+            <div class="math-puzzle" id="mathPuzzleSection">
+                <p class="question">Solve this to continue:</p>
+                <p class="math-question">If my love for you grows by 25 each day, and today is day 117, how much love do I have for you?</p>
+                <p class="hint">(Start counting from day 1 = 25, day 2 = 50...)</p>
+                <input type="text" id="mathAnswer" placeholder="Your answer">
+                <br>
+                <button class="submit-btn" onclick="checkMath()">Submit 💕</button>
+                <p class="error-message" id="mathError">Try again! 25 × 117 = ? 💭</p>
+            </div>
+
+            <!-- Anniversary reveal (hidden initially) -->
+            <div class="anniversary-reveal" id="anniversaryReveal">
+                <h3>✨ That's right! ✨</h3>
+                <p>But do you know what 2925 really means?</p>
+                <div class="anniversary-date">02/09/2025</div>
+                <p><strong>Our Anniversary Day! 💕</strong></p>
+                <p>The day that changed everything... 🌹</p>
+                <button class="continue-btn" onclick="continueToNextStage()">Continue 💖</button>
+            </div>
+        </div>
+
+        <!-- Stage 2: Riddle -->
+        <div class="puzzle-stage" id="stage2">
+            <h2>💕 Stage 2: The Riddle 💕</h2>
+            <div class="riddle">
+                <p class="riddle-text">
+                    "I fly without wings,<br>
+                    I cry without eyes.<br>
+                    Wherever I go, darkness flies.<br>
+                    But I make hearts grow bigger in size.<br>
+                    What am I?"
+                </p>
+                <input type="text" id="riddleAnswer" placeholder="Your answer">
+                <br>
+                <button class="submit-btn" onclick="checkRiddle()">Submit 💕</button>
+                <p class="error-message" id="riddleError">Hint: It's a feeling! 💭</p>
+            </div>
+        </div>
+
+        <!-- Stage 3: Nickname Question -->
+        <div class="puzzle-stage" id="stage3">
+            <h2>💕 Stage 3: Know Me Well 💕</h2>
+            <div class="nickname-choice" id="nicknameSection">
+                <p class="question">What is my favorite name to call you? 🥰</p>
+                <p class="hint">Think carefully... 😏</p>
+                <div class="nickname-buttons">
+                    <button class="nickname-btn" onclick="checkNickname('babe')">Babe</button>
+                    <button class="nickname-btn" onclick="checkNickname('munchkin')">Munchkin</button>
+                    <button class="nickname-btn" onclick="checkNickname('sugarplum')">Sugarplum</button>
+                    <button class="nickname-btn" onclick="checkNickname('love')">Love</button>
+                    <button class="nickname-btn" onclick="checkNickname('all')">All the Above</button>
+                </div>
+
+                <!-- Wrong answer hint -->
+                <div class="wrong-hint" id="wrongHint">
+                    <p>😊 You're right, but there's a better answer, babe! 💕</p>
+                    <p>Look again... 😉</p>
+                </div>
+            </div>
+
+            <!-- Correct answer reveal -->
+            <div class="correct-reveal" id="nicknameReveal">
+                <h3>You know that's right! 😉</h3>
+                <p>I love calling you ALL of those names! 💕</p>
+                <button class="continue-btn" onclick="continueToNextStage()">Continue 💖</button>
+            </div>
+        </div>
+
+        <!-- Stage 4: The Chase (Final!) -->
+        <div class="puzzle-stage" id="stage4">
+            <h2>💕 Stage 4: The Final Question 💕</h2>
+            <p class="question">Will you be my Valentine? 🌹</p>
+            <p class="hint">Keep clicking "Yes" to show your love! 💖</p>
+            <div class="buttons">
+                <button id="yesBtn">Yes! 💖</button>
+                <button id="noBtn">No</button>
+            </div>
+        </div>
+
+        <!-- Success -->
+        <div class="success" id="successMessage">
+            <div class="hearts">💕💖💗💓💞</div>
+            <h2 style="color: #ff6b9d;">You completed the puzzle! 🎉</h2>
+            <p style="margin-top: 20px; font-size: 1.2em;">And guess what? No matter what you picked, the answer is YES! 💕</p>
+            <p class="final-message">Happy Valentine's Day, My Love! ❤️</p>
+        </div>
+    </div>
+
+    <!-- Music control button -->
+    <button class="music-control" id="musicControl">🔊</button>
+
+    <!-- Song credit -->
+    <div class="song-credit">🎵 Radiance - Dava & Tems</div>
+
+    <!-- Audio element -->
+    <audio id="bgMusic" loop>
+        <source src="radiance.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        const bgMusic = document.getElementById('bgMusic');
+        const musicControl = document.getElementById('musicControl');
+        const startOverlay = document.getElementById('startOverlay');
+        const progressBar = document.getElementById('progressBar');
+        const stageIndicator = document.getElementById('stageIndicator');
+        let isPlaying = false;
+        let currentStage = 1;
+        let yesClickCount = 0;
+
+        // Start overlay click handler
+        startOverlay.addEventListener('click', () => {
+            startOverlay.style.display = 'none';
+            updateProgress();
+            bgMusic.play().then(() => {
+                isPlaying = true;
+                musicControl.textContent = '🔊';
+            }).catch(err => {
+                console.log('Autoplay prevented:', err);
+            });
+        });
+
+        // Music control toggle
+        musicControl.addEventListener('click', () => {
+            if (isPlaying) {
+                bgMusic.pause();
+                musicControl.textContent = '🔇';
+                isPlaying = false;
+            } else {
+                bgMusic.play();
+                musicControl.textContent = '🔊';
+                isPlaying = true;
+            }
+        });
+
+        // Update progress bar
+        function updateProgress() {
+            const progress = (currentStage / 4) * 100;
+            progressBar.style.width = progress + '%';
+            stageIndicator.textContent = `Stage ${currentStage} of 4`;
+        }
+
+        // Stage 1: Math puzzle
+        function checkMath() {
+            const answer = document.getElementById('mathAnswer').value.trim();
+            // 25 * 117 = 2925
+            if (answer === '2925') {
+                document.getElementById('mathError').style.display = 'none';
+                // Hide the math puzzle
+                document.getElementById('mathPuzzleSection').classList.add('hidden');
+                // Show anniversary reveal
+                document.getElementById('anniversaryReveal').classList.add('show');
+            } else {
+                document.getElementById('mathError').style.display = 'block';
+            }
+        }
+
+        // Continue button after anniversary reveal
+        function continueToNextStage() {
+            nextStage();
+        }
+
+        // Stage 2: Riddle
+        function checkRiddle() {
+            const answer = document.getElementById('riddleAnswer').value.trim().toLowerCase();
+            if (answer === 'love' || answer === 'a cloud' || answer === 'cloud') {
+                document.getElementById('riddleError').style.display = 'none';
+                nextStage();
+            } else {
+                document.getElementById('riddleError').style.display = 'block';
+                document.getElementById('riddleError').textContent = 'Hint: It starts with L! 💭';
+            }
+        }
+
+        // Stage 3: Nickname question
+        function checkNickname(choice) {
+            if (choice === 'all') {
+                // Correct answer!
+                document.getElementById('nicknameSection').classList.add('hidden');
+                document.getElementById('nicknameReveal').classList.add('show');
+            } else {
+                // Wrong answer - show hint and shake animation
+                event.target.classList.add('wrong');
+                document.getElementById('wrongHint').classList.add('show');
+                
+                setTimeout(() => {
+                    event.target.classList.remove('wrong');
+                }, 500);
+            }
+        }
+
+        // Stage 4: YES grows with 10 taps, NO moves around near YES
+        function initializeButtonChase() {
+            const yesBtn = document.getElementById('yesBtn');
+            const noBtn = document.getElementById('noBtn');
+            const container = document.querySelector('.container');
+            const containerRect = container.getBoundingClientRect();
+
+            // Initial positions - centered
+            let yesX = window.innerWidth / 2 - 75;
+            let yesY = containerRect.top + 280;
+            yesBtn.style.left = yesX + 'px';
+            yesBtn.style.top = yesY + 'px';
+            
+            let noX = window.innerWidth / 2 + 75;
+            let noY = containerRect.top + 280;
+            noBtn.style.left = noX + 'px';
+            noBtn.style.top = noY + 'px';
+
+            // Function to move NO around YES
+            function moveNoNearYes() {
+                const yesRect = yesBtn.getBoundingClientRect();
+                const yesCenterX = yesRect.left + yesRect.width / 2;
+                const yesCenterY = yesRect.top + yesRect.height / 2;
+                
+                // Random angle around YES
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 80 + Math.random() * 40; // 80-120px away
+                
+                const newX = yesCenterX + Math.cos(angle) * distance - 50;
+                const newY = yesCenterY + Math.sin(angle) * distance - 25;
+                
+                noBtn.style.left = newX + 'px';
+                noBtn.style.top = newY + 'px';
+            }
+
+            // Move NO button every 2 seconds
+            setInterval(moveNoNearYes, 2000);
+
+            // Click YES - grows bigger with each tap (10 total)
+            yesBtn.addEventListener('click', () => {
+                yesClickCount++;
+                
+                // Calculate scale based on click (grows from 1x to 4x over 10 clicks)
+                const scale = 1 + (yesClickCount * 0.3);
+                yesBtn.style.transform = `scale(${scale})`;
+                
+                // NO button shrinks as YES grows
+                const noScale = Math.max(1 - (yesClickCount * 0.08), 0.3);
+                noBtn.style.transform = `scale(${noScale})`;
+                noBtn.style.opacity = Math.max(1 - (yesClickCount * 0.07), 0.3);
+                
+                // Update YES text to get more excited
+                if (yesClickCount === 2) {
+                    yesBtn.textContent = 'YES! 💕';
+                } else if (yesClickCount === 4) {
+                    yesBtn.textContent = 'YES!! 💗';
+                } else if (yesClickCount === 6) {
+                    yesBtn.textContent = 'YES!!! 💓';
+                } else if (yesClickCount === 8) {
+                    yesBtn.textContent = 'YES!!!! 💞';
+                } else if (yesClickCount === 9) {
+                    yesBtn.textContent = 'YESSS!!!! 💝';
+                }
+                
+                // At 10 clicks - EXPLODE!
+                if (yesClickCount >= 10) {
+                    yesBtn.textContent = 'YES!!!!! 💖💖💖';
+                    yesBtn.classList.add('exploding');
+                    noBtn.style.opacity = '0';
+                    
+                    // After explosion, show success
+                    setTimeout(() => {
+                        nextStage();
+                    }, 1000);
+                }
+            });
+
+            // Click NO - moves it to a new position near YES
+            noBtn.addEventListener('click', () => {
+                moveNoNearYes();
+            });
+
+            // Touch support for mobile
+            yesBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                yesBtn.click();
+            });
+
+            noBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                noBtn.click();
+            });
+        }
+
+        // Move to next stage
+        function nextStage() {
+            const currentStageEl = document.getElementById('stage' + currentStage);
+            currentStageEl.classList.remove('active');
+            
+            currentStage++;
+            
+            if (currentStage <= 4) {
+                const nextStageEl = document.getElementById('stage' + currentStage);
+                nextStageEl.classList.add('active');
+                updateProgress();
+                
+                // Initialize button chase when reaching stage 4
+                if (currentStage === 4) {
+                    initializeButtonChase();
+                }
+            } else {
+                // Show success!
+                document.getElementById('successMessage').style.display = 'block';
+                progressBar.style.width = '100%';
+                stageIndicator.textContent = 'Complete! 🎉';
+                createConfetti();
+            }
+        }
+
+        // Confetti effect
+        function createConfetti() {
+            const colors = ['#ff6b9d', '#ffc3d5', '#ff8fab', '#ffb3c1', '#ff1493'];
+            for (let i = 0; i < 250; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.style.position = 'fixed';
+                    confetti.style.width = Math.random() * 20 + 5 + 'px';
+                    confetti.style.height = Math.random() * 20 + 5 + 'px';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.left = Math.random() * window.innerWidth + 'px';
+                    confetti.style.top = '-20px';
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    confetti.style.pointerEvents = 'none';
+                    confetti.style.transition = 'all ' + (Math.random() * 3 + 2) + 's ease-out';
+                    confetti.style.zIndex = '4000';
+                    confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        confetti.style.top = window.innerHeight + 100 + 'px';
+                        confetti.style.opacity = '0';
+                        confetti.style.transform = `rotate(${Math.random() * 1080}deg)`;
+                    }, 10);
+                    
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 5000);
+                }, i * 12);
+            }
+        }
+
+        // Allow Enter key for inputs
+        document.getElementById('mathAnswer').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkMath();
+        });
+        document.getElementById('riddleAnswer').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkRiddle();
+        });
+    </script>
+</body>
+</html>
